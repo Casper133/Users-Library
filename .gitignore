@@ -8,4 +8,4 @@ logs
 .idea/**
 !.idea/runConfigurations/
 .idea/runConfigurations/**
-!.idea/runConfigurations/users_storage.xml
+!.idea/runConfigurations/users_library.xml
