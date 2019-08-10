@@ -10,20 +10,40 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class UserFileRepository implements UserRepository {
+    private File[] getUserFiles(File usersDir) {
+        if (usersDir.exists()) {
+            FileFilter fileFilter = file -> file.getName().endsWith(".user");
+            return usersDir.listFiles(fileFilter);
+        }
+
+        return null;
+    }
+
+    private long getUserId(String fileName) {
+        Pattern idPattern = Pattern.compile("(\\d+)\\.user");
+        Matcher idMatcher = idPattern.matcher(fileName);
+
+        if (idMatcher.find()) {
+            return Long.parseLong(idMatcher.group(1));
+        }
+
+        return -1;
+    }
+
     private long getLastUserId(File[] userFiles) {
         long[] idArray = new long[userFiles.length];
 
         for (int i = 0; i < userFiles.length; i++) {
-            Pattern idPattern = Pattern.compile("(\\d+)\\.user");
-            Matcher idMatcher = idPattern.matcher(userFiles[i].getName());
+            long userId = getUserId(userFiles[i].getName());
 
-            if (idMatcher.find()) {
-                idArray[i] = Long.parseLong(idMatcher.group(1));
+            if (userId != -1) {
+                idArray[i] = userId;
             }
         }
 
@@ -88,19 +108,15 @@ public class UserFileRepository implements UserRepository {
     @Override
     public void save(User user) {
         File usersDir = new File("users");
+        File[] userFiles = getUserFiles(usersDir);
 
-        if (usersDir.exists()) {
-            FileFilter fileFilter = file -> file.getName().endsWith(".user");
-            File[] userFiles = usersDir.listFiles(fileFilter);
+        if (userFiles != null) {
+            long lastUserId = getLastUserId(userFiles);
 
-            if (userFiles != null) {
-                long lastUserId = getLastUserId(userFiles);
-
-                if (lastUserId != -1) {
-                    String newUserFileName = (lastUserId + 1) + ".user";
-                    File userFile = new File(usersDir, newUserFileName);
-                    saveUserToFile(user, userFile);
-                }
+            if (lastUserId != -1) {
+                String newUserFileName = (lastUserId + 1) + ".user";
+                File userFile = new File(usersDir, newUserFileName);
+                saveUserToFile(user, userFile);
             }
         } else if (usersDir.mkdir()) {
             File userFile = new File(usersDir, "1.user");
@@ -121,7 +137,28 @@ public class UserFileRepository implements UserRepository {
 
     @Override
     public List<User> getAll() {
-        return null;
+        List<User> users = new LinkedList<>();
+        File usersDir = new File("users");
+        File[] userFiles = getUserFiles(usersDir);
+
+        if (userFiles != null) {
+            for (File userFile : userFiles) {
+                String userFileText;
+                long userId = getUserId(userFile.getName());
+
+                try {
+                    userFileText = new String(Files.readAllBytes(Paths.get(userFile.getCanonicalPath())));
+                    User user = parseUserFileText(userFileText);
+                    if (user != null) {
+                        user.setId(userId);
+                        users.add(user);
+                    }
+                } catch (IOException ignored) {
+                }
+            }
+        }
+
+        return users;
     }
 
     @Override
@@ -134,11 +171,9 @@ public class UserFileRepository implements UserRepository {
             try {
                 String userFileText = new String(Files.readAllBytes(Paths.get(userFile.getCanonicalPath())));
                 User user = parseUserFileText(userFileText);
-
                 if (user != null) {
                     user.setId(id);
                 }
-
                 return user;
             } catch (IOException ignored) {
             }
