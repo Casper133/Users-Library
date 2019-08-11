@@ -1,5 +1,6 @@
 package com.casper.userslibrary.controller.command;
 
+import com.casper.userslibrary.controller.command.wrapper.EditUserCommand;
 import com.casper.userslibrary.controller.command.wrapper.NewUserCommand;
 import com.casper.userslibrary.model.repository.UserRepository;
 import com.casper.userslibrary.model.validator.Validator;
@@ -23,8 +24,11 @@ public class CommandInvoker {
     public CommandInvoker(MessageWriter messageWriter, MessageReader messageReader,
                           Validator emailValidator, Validator phoneNumberValidator, UserRepository userRepository) {
 
-        newUserCommand = new NewUserCommand(messageWriter, messageReader,
-                emailValidator, phoneNumberValidator, userRepository);
+        CommandUtils commandUtils =
+                new CommandUtils(messageWriter, messageReader, emailValidator, phoneNumberValidator, userRepository);
+
+        newUserCommand = new NewUserCommand(messageWriter, messageReader, userRepository, commandUtils);
+        editUserCommand = new EditUserCommand(messageWriter, messageReader, userRepository, commandUtils);
     }
 
     public void handle(String message) {

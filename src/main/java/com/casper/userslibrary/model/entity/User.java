@@ -19,4 +19,22 @@ public class User {
     private String[] roles;
 
     private String[] phoneNumbers;
+
+    @Override
+    public String toString() {
+        StringBuilder userText = new StringBuilder(
+                "Id: " + id + "\nИмя: " + firstName + "\nФамилия: " + lastName + "\nE-mail: " + email + "\nРоли: | ");
+
+        for (String role : roles) {
+            userText.append(role).append(" | ");
+        }
+
+        userText.append("\nНомера телефонов: | ");
+
+        for (String phoneNumber : phoneNumbers) {
+            userText.append(phoneNumber).append(" | ");
+        }
+
+        return userText.append("\n").toString();
+    }
 }

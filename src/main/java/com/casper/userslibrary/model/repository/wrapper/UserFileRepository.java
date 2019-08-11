@@ -190,7 +190,7 @@ public class UserFileRepository implements UserRepository {
     @Override
     public User getById(long id) throws OperationFailedException {
         if (id <= 0) {
-            return null;
+            throw new OperationFailedException("Пользователь не найден.");
         }
 
         File usersDir = new File("users");
@@ -201,10 +201,13 @@ public class UserFileRepository implements UserRepository {
             try {
                 String userFileText = new String(Files.readAllBytes(Paths.get(userFile.getCanonicalPath())));
                 User user = parseUserFileText(userFileText);
+
                 if (user != null) {
                     user.setId(id);
+                    return user;
+                } else {
+                    throw new OperationFailedException("Пользователь не найден.");
                 }
-                return user;
             } catch (IOException e) {
                 throw new OperationFailedException("Ошибка чтения файла (исключение)");
             }
