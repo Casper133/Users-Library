@@ -1,6 +1,7 @@
 package com.casper.userslibrary.model.repository.wrapper;
 
 import com.casper.userslibrary.model.entity.User;
+import com.casper.userslibrary.model.exception.OperationFailedException;
 import com.casper.userslibrary.model.repository.UserRepository;
 
 import java.io.File;
@@ -20,9 +21,9 @@ public class UserFileRepository implements UserRepository {
         if (usersDir.exists()) {
             FileFilter fileFilter = file -> file.getName().endsWith(".user");
             return usersDir.listFiles(fileFilter);
+        } else {
+            return null;
         }
-
-        return null;
     }
 
     private long getUserId(String fileName) {
@@ -31,9 +32,9 @@ public class UserFileRepository implements UserRepository {
 
         if (idMatcher.find()) {
             return Long.parseLong(idMatcher.group(1));
+        } else {
+            return -1;
         }
-
-        return -1;
     }
 
     private long getLastUserId(File[] userFiles) {
@@ -55,7 +56,7 @@ public class UserFileRepository implements UserRepository {
         }
     }
 
-    private void saveUserToFile(User user, File file) {
+    private void saveUserToFile(User user, File file) throws OperationFailedException {
         try {
             FileWriter fileWriter = new FileWriter(file);
 
@@ -75,7 +76,8 @@ public class UserFileRepository implements UserRepository {
 
             fileWriter.flush();
             fileWriter.close();
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            throw new OperationFailedException("Save error (exception)");
         }
     }
 
@@ -100,13 +102,13 @@ public class UserFileRepository implements UserRepository {
                         .roles(roles)
                         .phoneNumbers(phoneNumbers)
                     .build();
+        } else {
+            return null;
         }
-
-        return null;
     }
 
     @Override
-    public void save(User user) {
+    public void save(User user) throws OperationFailedException {
         File usersDir = new File("users");
         File[] userFiles = getUserFiles(usersDir);
 
@@ -121,22 +123,41 @@ public class UserFileRepository implements UserRepository {
         } else if (usersDir.mkdir()) {
             File userFile = new File(usersDir, "1.user");
             saveUserToFile(user, userFile);
+        } else {
+            throw new OperationFailedException("Save error: can't create directory with user files");
         }
     }
 
     @Override
-    public void update(User user) {
+    public void update(User user) throws OperationFailedException {
         File usersDir = new File("users");
 
         if (usersDir.exists()) {
             String fileName = user.getId() + ".user";
             File userFile = new File(usersDir, fileName);
             saveUserToFile(user, userFile);
+        } else {
+            throw new OperationFailedException("Update error: directory with user files not exists");
         }
     }
 
     @Override
-    public List<User> getAll() {
+    public void delete(User user) throws OperationFailedException {
+        File usersDir = new File("users");
+
+        if (usersDir.exists()) {
+            String fileName = user.getId() + ".user";
+            File userFile = new File(usersDir, fileName);
+            if (!userFile.delete()) {
+                throw new OperationFailedException("Delete error: can't delete user file");
+            }
+        } else {
+            throw new OperationFailedException("Delete error: directory with user files not exists");
+        }
+    }
+
+    @Override
+    public List<User> getAll() throws OperationFailedException {
         List<User> users = new LinkedList<>();
         File usersDir = new File("users");
         File[] userFiles = getUserFiles(usersDir);
@@ -153,16 +174,19 @@ public class UserFileRepository implements UserRepository {
                         user.setId(userId);
                         users.add(user);
                     }
-                } catch (IOException ignored) {
+                } catch (IOException e) {
+                    throw new OperationFailedException("Error reading file (exception)");
                 }
             }
+        } else {
+            throw new OperationFailedException("GetAll error: directory with user files not exists");
         }
 
         return users;
     }
 
     @Override
-    public User getById(long id) {
+    public User getById(long id) throws OperationFailedException {
         if (id <= 0) {
             return null;
         }
@@ -179,10 +203,11 @@ public class UserFileRepository implements UserRepository {
                     user.setId(id);
                 }
                 return user;
-            } catch (IOException ignored) {
+            } catch (IOException e) {
+                throw new OperationFailedException("Error reading file (exception)");
             }
+        } else {
+            throw new OperationFailedException("GetById error: directory with user files not exists");
         }
-
-        return null;
     }
 }
