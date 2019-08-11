@@ -58,8 +58,5 @@ public class NewUserCommand implements Command {
         } catch (OperationFailedException e) {
             messageWriter.writeMessage(e.getMessage());
         }
-
-        messageWriter.stop();
-        messageReader.stop();
     }
 }
