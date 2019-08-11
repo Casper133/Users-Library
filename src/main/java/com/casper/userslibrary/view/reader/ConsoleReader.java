@@ -20,7 +20,7 @@ public class ConsoleReader implements MessageReader {
     }
 
     @Override
-    public void stopReading() {
+    public void stop() {
         try {
             bufferedReader.close();
         } catch (IOException ignored) {
