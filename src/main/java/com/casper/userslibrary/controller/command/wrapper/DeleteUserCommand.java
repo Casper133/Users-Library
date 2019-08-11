@@ -22,13 +22,13 @@ public class DeleteUserCommand implements Command {
         try {
             commandUtils.outputAllUsers();
 
-            messageWriter.writeMessage("Введите id редактируемого пользователя:");
+            messageWriter.writeMessage("Введите id удаляемого пользователя:");
             User user = commandUtils.chooseUser();
 
             userRepository.delete(user);
-            messageWriter.writeMessage("Пользователь (" + user.getId() + " id) удалён.");
+            messageWriter.writeMessage("Пользователь (" + user.getId() + " id) удалён.\n");
         } catch (OperationFailedException e) {
-            messageWriter.writeMessage(e.getMessage());
+            messageWriter.writeMessage(e.getMessage() + "\n");
         }
     }
 }

@@ -17,6 +17,6 @@ public class HelpCommand implements Command {
         messageWriter.writeMessage("/delete_user — удалить пользователя");
         messageWriter.writeMessage("/all_users — список всех пользователей");
         messageWriter.writeMessage("/help — справка");
-        messageWriter.writeMessage("/exit — выход");
+        messageWriter.writeMessage("/exit — выход\n");
     }
 }

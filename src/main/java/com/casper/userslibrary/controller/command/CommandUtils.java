@@ -40,7 +40,7 @@ public class CommandUtils {
     }
 
     public String[] getArrayUserElement(String errorMessage) {
-        Pattern splitPattern = Pattern.compile("\\s");
+        Pattern splitPattern = Pattern.compile("\\|");
         boolean valid = false;
         String rawElement;
         String[] elements = new String[0];
@@ -62,8 +62,8 @@ public class CommandUtils {
     public void validatePhoneNumbers(String[] phoneNumbers) {
         for (byte i = 0; i <= phoneNumbers.length - 1; i++) {
             while (!phoneNumberValidator.isValid(phoneNumbers[i])) {
-                messageWriter.writeMessage((i + 1) +
-                        " номер телефона некорректный (формат: 375** *******). Попробуйте ещё раз:");
+                messageWriter.writeMessage("Номер телефона №" + (i + 1) +
+                        " некорректный (формат: 375** *******). Попробуйте ещё раз:");
                 phoneNumbers[i] = messageReader.readMessage();
             }
         }

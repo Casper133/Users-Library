@@ -18,7 +18,7 @@ public class AllUsersCommand implements Command {
         try {
             commandUtils.outputAllUsers();
         } catch (OperationFailedException e) {
-            messageWriter.writeMessage(e.getMessage());
+            messageWriter.writeMessage(e.getMessage() + "\n");
         }
     }
 }

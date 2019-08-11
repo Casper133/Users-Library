@@ -22,7 +22,6 @@ public class NewUserCommand implements Command {
 
     @Override
     public void execute() {
-        messageWriter.writeMessage("Процесс создания нового пользователя запущен.");
         messageWriter.writeMessage("Введите имя:");
         String firstName = messageReader.readMessage();
 
@@ -32,12 +31,12 @@ public class NewUserCommand implements Command {
         messageWriter.writeMessage("Введите e-mail:");
         String email = commandUtils.readEmail();
 
-        messageWriter.writeMessage("Введите роли пользователя (максимум 3, разделены пробелом):");
+        messageWriter.writeMessage("Введите роли пользователя (максимум 3, разделены символом \"|\"):");
         String[] roles = commandUtils.getArrayUserElement(
                 "Список ролей некорректный. Попробуйте ещё раз:");
 
         messageWriter.writeMessage(
-                "Введите номера телефонов пользователя (максимум 3, разделены пробелом, формат: 375** *******):");
+                "Введите номера телефонов пользователя (максимум 3, разделены символом \"|\", формат: 375** *******):");
         String[] phoneNumbers = commandUtils.getArrayUserElement(
                 "Список телефонов некорректный. Попробуйте ещё раз:");
 
@@ -54,9 +53,9 @@ public class NewUserCommand implements Command {
 
         try {
             userRepository.save(user);
-            messageWriter.writeMessage("Новый пользователь успешно сохранён.");
+            messageWriter.writeMessage("Новый пользователь успешно сохранён.\n");
         } catch (OperationFailedException e) {
-            messageWriter.writeMessage(e.getMessage());
+            messageWriter.writeMessage(e.getMessage() + "\n");
         }
     }
 }

@@ -16,6 +16,7 @@ public class AppController {
         CommandInvoker commandInvoker = new CommandInvoker(exitFlag, messageWriter, messageReader);
 
         while (!commandInvoker.getExitFlag()[0]) {
+            messageWriter.writeMessage("Введите команду:");
             commandInvoker.handle(messageReader.readMessage());
         }
 

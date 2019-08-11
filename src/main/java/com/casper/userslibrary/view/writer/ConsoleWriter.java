@@ -9,5 +9,6 @@ public class ConsoleWriter implements MessageWriter {
     }
 
     @Override
-    public void stop() {}
+    public void stop() {
+    }
 }

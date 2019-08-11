@@ -35,14 +35,14 @@ public class EditUserCommand implements Command {
                 user.setEmail(commandUtils.readEmail());
                 break;
             case "4":
-                messageWriter.writeMessage("Введите новые роли пользователя (максимум 3, разделены пробелом):");
+                messageWriter.writeMessage("Введите новые роли пользователя (максимум 3, разделены символом \"|\"):");
                 user.setRoles(commandUtils.getArrayUserElement(
                         "Список ролей некорректный. Попробуйте ещё раз:"));
                 break;
             case "5":
                 messageWriter.writeMessage(
                         "Введите новые номера телефонов пользователя " +
-                                "(максимум 3, разделены пробелом, формат: 375** *******):");
+                                "(максимум 3, разделены символом \"|\", формат: 375** *******):");
 
                 String[] phoneNumbers = commandUtils.getArrayUserElement(
                         "Список телефонов некорректный. Попробуйте ещё раз:");
@@ -67,12 +67,12 @@ public class EditUserCommand implements Command {
             messageWriter.writeMessage("Введите номер редактируемого поля " +
                     "(1 - имя, 2 - фамилия, 3 - e-mail, 4 - роли, 5 - номера телефонов):");
 
-            if(editUser(user)) {
+            if (editUser(user)) {
                 userRepository.update(user);
-                messageWriter.writeMessage("Пользователь (" + user.getId() + " id) отредактирован.");
+                messageWriter.writeMessage("Пользователь (" + user.getId() + " id) отредактирован.\n");
             }
         } catch (OperationFailedException e) {
-            messageWriter.writeMessage(e.getMessage());
+            messageWriter.writeMessage(e.getMessage() + "\n");
         }
     }
 }
