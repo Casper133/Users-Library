@@ -77,7 +77,7 @@ public class UserFileRepository implements UserRepository {
             fileWriter.flush();
             fileWriter.close();
         } catch (IOException e) {
-            throw new OperationFailedException("Save error (exception)");
+            throw new OperationFailedException("Ошибка сохранения (исключение)");
         }
     }
 
@@ -124,7 +124,7 @@ public class UserFileRepository implements UserRepository {
             File userFile = new File(usersDir, "1.user");
             saveUserToFile(user, userFile);
         } else {
-            throw new OperationFailedException("Save error: can't create directory with user files");
+            throw new OperationFailedException("Ошибка сохранения: невозможно создать директорию для файлов");
         }
     }
 
@@ -137,7 +137,8 @@ public class UserFileRepository implements UserRepository {
             File userFile = new File(usersDir, fileName);
             saveUserToFile(user, userFile);
         } else {
-            throw new OperationFailedException("Update error: directory with user files not exists");
+            throw new OperationFailedException(
+                    "Ошибка: директория с файлами пользователей не существует");
         }
     }
 
@@ -149,10 +150,11 @@ public class UserFileRepository implements UserRepository {
             String fileName = user.getId() + ".user";
             File userFile = new File(usersDir, fileName);
             if (!userFile.delete()) {
-                throw new OperationFailedException("Delete error: can't delete user file");
+                throw new OperationFailedException(
+                        "Ошибка удаления: невозможно удалить файл пользователя");
             }
         } else {
-            throw new OperationFailedException("Delete error: directory with user files not exists");
+            throw new OperationFailedException("Ошибка: директория с файлами пользователей не существует");
         }
     }
 
@@ -175,11 +177,11 @@ public class UserFileRepository implements UserRepository {
                         users.add(user);
                     }
                 } catch (IOException e) {
-                    throw new OperationFailedException("Error reading file (exception)");
+                    throw new OperationFailedException("Ошибка чтения файла (исключение)");
                 }
             }
         } else {
-            throw new OperationFailedException("GetAll error: directory with user files not exists");
+            throw new OperationFailedException("Ошибка: директория с файлами пользователей не существует");
         }
 
         return users;
@@ -204,10 +206,10 @@ public class UserFileRepository implements UserRepository {
                 }
                 return user;
             } catch (IOException e) {
-                throw new OperationFailedException("Error reading file (exception)");
+                throw new OperationFailedException("Ошибка чтения файла (исключение)");
             }
         } else {
-            throw new OperationFailedException("GetById error: directory with user files not exists");
+            throw new OperationFailedException("Ошибка: директория с файлами пользователей не существует");
         }
     }
 }
