@@ -163,6 +163,10 @@ public class UserFileRepository implements UserRepository {
 
     @Override
     public User getById(long id) {
+        if (id <= 0) {
+            return null;
+        }
+
         File usersDir = new File("users");
 
         if (usersDir.exists()) {
